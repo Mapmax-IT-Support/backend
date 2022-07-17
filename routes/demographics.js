@@ -1,0 +1,114 @@
+const express = require('express');
+const router = express.Router();
+const citySdkHandler = require('../public/javascripts/handlers/citysdk-handler')
+const Constants = require('../public/javascripts/constants')
+const demoHandler = require('../public/javascripts/handlers/demographics-handler')
+const censusHandler = require('../public/javascripts/handlers/census-handler')
+const cors = require('cors')
+
+router.use(cors())
+router.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", Constants.ORIGIN)
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+  next();
+});
+
+/* GET home page. */
+router.get('/', function (req, res) {
+  res.render('index', { title: 'Demographics' });
+});
+
+//getTradeZoneStats
+router.post('/stats/tradezone', async (req, res) => {
+  let bounds = req.body.bounds
+  let center = req.body.center
+
+  let data = await demoHandler.getTradeZoneStats(center, bounds)
+  res.setHeader('Content-Type', 'application/json')
+  res.send(data)
+})
+
+// get loaded tradezone stats
+router.post('/stats/tradezone/loaded', async (req, res) => {
+  let pid = req.body.pid
+  let range = req.body.range
+  let data = await demoHandler.getLoadedTradeZoneStats(pid, range)
+  res.setHeader('Content-Type', 'application/json')
+  res.send(data)
+})
+
+// tract stats
+router.get('/stats/tract/:lat/:lng', async (req, res) => {
+  let data = await demoHandler.getTractStats(req.params.lat, req.params.lng)
+  res.setHeader('Content-Type', 'application/json');
+  res.send(data);
+})
+
+// NEW  zip stats
+router.get('/stats/zip/:category/:state/:zip', async (req, res) => {
+  let data = await censusHandler.getZipData(req.params.state, req.params.zip, req.params.category)
+  res.setHeader('Content-Type', 'application/json');
+  res.send(data);
+})
+
+
+// get block group tradezone stats
+router.post('/stats/tradezone/blocks', async (req, res) => {
+  let data = await demoHandler.getZoneStatsBlockGroups(req.body.center, req.body.bounds)
+  res.setHeader('Content-Type', 'application/json')
+  res.send(data)
+
+})
+
+// get zip code tradezone stats
+router.post('/stats/tradezone/zip', async (req, res) => {
+  let data = await demoHandler.getZoneStatsZip(req.body.bounds)
+  res.setHeader('Content-Type', 'application/json')
+  res.send(data)
+
+})
+
+// get population of city
+router.get('/population/city/:lat/:lng', async (req, res) => {
+  let data = await citySdkHandler.getCityPopulation(req.params.lat, req.params.lng).then(data => data)
+  res.setHeader('Content-Type', 'application/json');
+  res.send(data);
+})
+
+// get age 
+router.get('/age/:range/:lat/:lng', async (req, res) => {
+  let data = await citySdkHandler.getAge(req.params.range, req.params.lat, req.params.lng).then(data => data)
+  res.setHeader('Content-Type', 'application/json');
+  res.send(data);
+})
+
+// get income 
+router.get('/income/:range/:lat/:lng', async (req, res) => {
+  let data = await citySdkHandler.getIncome(req.params.range, req.params.lat, req.params.lng).then(data => data)
+  res.setHeader('Content-Type', 'application/json');
+  res.send(data);
+})
+
+// get social
+router.get('/social/:range/:lat/:lng', async (req, res) => {
+  let data = await citySdkHandler.getSocial(req.params.range, req.params.lat, req.params.lng).then(data => data)
+  res.setHeader('Content-Type', 'application/json');
+  res.send(data);
+})
+
+// get basic stats
+router.get('/basic/:range/:lat/:lng', async (req, res) => {
+  let data = await citySdkHandler.getBasic(req.params.range, req.params.lat, req.params.lng).then(data => data)
+  res.setHeader('Content-Type', 'application/json');
+  res.send(data);
+})
+
+// get tract id info
+router.get('/tract/:lat/:lng', async (req, res) => {
+  let data = await citySdkHandler.getTract(req.params.lat, req.params.lng).then(data => data)
+  res.setHeader('Content-Type', 'application/json');
+  res.send(data);
+})
+
+
+module.exports = router;
