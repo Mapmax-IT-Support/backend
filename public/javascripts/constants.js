@@ -1,5 +1,5 @@
 const Constants = {
-    ORIGIN: 'https://mapmax-it-support.github.io/frontend/',
+    ORIGIN: 'https://mapmax-it-support.github.io',
 //'http://localhost:3000',
     MONGO_URL: 'mongodb+srv://rfm7991:BJhoEl6JFrzxHeFx@landmark-dev-cluster.x5vhm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
     GOOGLE_KEY: 'AIzaSyC9E4iWpRUJxljL3sHTiciL--ukdb_ByrI',
